@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const rest = axios.create({
-  baseURL: `/api`,
+  baseURL: '/api',
 });
 
 class RestApi {

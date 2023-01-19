@@ -1,4 +1,5 @@
 import { signIn } from 'next-auth/react';
+import { NextSeo } from 'next-seo';
 import styles from '../styles/login.module.scss';
 
 const LoginPage = () => {
@@ -9,6 +10,7 @@ const LoginPage = () => {
   };
   return (
         <div className={styles.container}>
+            <NextSeo title='긱블 스크럼 생성기 로그인'/>
             <img src='/icons/ic_logo.png'
                  alt=''/>
             <h1 className={styles.title}>스크럼 생성기</h1>

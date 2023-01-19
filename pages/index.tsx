@@ -1,6 +1,8 @@
 import type { NextPage } from 'next';
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { useMemo, useState } from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { NextSeo } from 'next-seo';
 import dayjs from 'dayjs';
 import styles from '../styles/index.module.scss';
 import RestApi from '../libs/RestApi';
@@ -83,8 +85,14 @@ const Home: NextPage = () => {
         });
     }
   };
+  const logout = () => {
+    signOut();
+  };
   return (
         <div className={styles.wrapper}>
+            <NextSeo title='긱블 스크럼 생성기'/>
+            <button className={styles.logout}
+                    onClick={logout}>로그아웃</button>
             <div className={styles.container}>
                 <label className={styles.label}>팀</label>
                 <div className={styles.centerContainer}>

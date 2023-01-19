@@ -29,7 +29,7 @@ export default async function handler(
       },
     ],
     mrkdwn: true,
-    channel: 'C04DF96DP7U',
+    channel,
   });
   res.json(true);
 }
