@@ -1,0 +1,33 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  background-color: #481549;
+  border: none;
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  padding: 12px 50px;
+  border-radius: 4px;
+  cursor: pointer;
+
+  img {
+    width: 32px;
+    height: 32px;
+    margin-right: 12px;
+  }
+}
+
+.title {
+  color: #3FB9A8;
+  font-size: 40px;
+  margin: 24px 0 88px;
+}
