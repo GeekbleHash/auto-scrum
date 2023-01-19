@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const rest = axios.create({
-  baseURL: 'https://localhost:3003/api',
+  baseURL: `${process.env.SERVER_URL}/api`,
 });
 
 class RestApi {

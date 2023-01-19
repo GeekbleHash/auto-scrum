@@ -2,6 +2,7 @@ declare namespace NodeJS {
     declare interface ProcessEnv {
         SLACK_ID: string;
         SLACK_SECRET: string;
+        SERVER_URL: string;
     }
 }
 
