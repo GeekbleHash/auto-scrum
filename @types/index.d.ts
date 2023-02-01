@@ -3,6 +3,7 @@ declare namespace NodeJS {
         SLACK_ID: string;
         SLACK_SECRET: string;
         SERVER_URL: string;
+        BOT_TOKEN: string;
     }
 }
 

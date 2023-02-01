@@ -7,7 +7,9 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   const { accessToken, channel, user } = req.query;
+  console.log(accessToken);
   if (typeof accessToken === 'string') {
+    console.log(channel);
     const fetched = (await axios.get<IHistory>('https://slack.com/api/conversations.history', {
       params: { channel },
       headers: {

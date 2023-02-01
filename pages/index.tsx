@@ -7,11 +7,14 @@ import dayjs from 'dayjs';
 import styles from '../styles/index.module.scss';
 import RestApi from '../libs/RestApi';
 import 'dayjs/locale/ko';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 dayjs.locale('ko');
 
 const Home: NextPage = () => {
   const { data } = useSession();
+  const router = useRouter();
   const [name, setName] = useState<string>(data?.user?.name || '');
   const [isHome, setIsHome] = useState<boolean>(false);
   const ogDate = () => {
@@ -176,6 +179,10 @@ const Home: NextPage = () => {
                     작성하기
                 </button>
             </div>
+            <button onClick={() => router.push('/how-to-use')}
+                    className={styles.howBtn} >
+                오류가 발생한다면 확인
+            </button>
         </div>
   );
 };

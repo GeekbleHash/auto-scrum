@@ -6,6 +6,7 @@ export default NextAuth({
     SlackProvider({
       clientId: process.env.SLACK_ID,
       clientSecret: process.env.SLACK_SECRET,
+      idToken: true,
     }),
   ],
   callbacks: {
@@ -14,7 +15,6 @@ export default NextAuth({
       if (account?.access_token) {
         token.access_token = account.access_token;
       }
-      // console.log(account);
       return token;
     },
     session: ({ token, user, session }) => {

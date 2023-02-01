@@ -168,4 +168,36 @@
   font-size: 14px;
   border-radius: 4px;
   cursor: pointer;
+  @media (max-width: 960px) {
+    right: calc(50vw - 400px);
+  }
+  @media (max-width: 840px) {
+    right: 24px;
+  }
+}
+
+.link {
+  color: $blue60;
+}
+
+.how {
+  width: 100%;
+  &Btn {
+    position: fixed;
+    left: 80px;
+    top: 24px;
+    background-color: $blue40;
+    color: white;
+    padding: 12px 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    @media (max-width: 960px) {
+      left: calc(50vw - 400px);
+    }
+    @media (max-width: 840px) {
+      left: 24px;
+    }
+  }
 }
