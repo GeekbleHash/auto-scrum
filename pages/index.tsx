@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import styles from '../styles/index.module.scss';
 import RestApi from '../libs/RestApi';
 import 'dayjs/locale/ko';
-import Link from 'next/link';
+// eslint-disable-next-line import/order
 import { useRouter } from 'next/router';
 
 dayjs.locale('ko');
