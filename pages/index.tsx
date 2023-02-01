@@ -97,87 +97,96 @@ const Home: NextPage = () => {
             <button className={styles.logout}
                     onClick={logout}>로그아웃</button>
             <div className={styles.container}>
-                <label className={styles.label}>팀</label>
-                <div className={styles.centerContainer}>
-                    {channels.map((c, idx) => (
-                        <button key={`channel${idx}`}
-                                onClick={() => setChannel(c.channel)}
-                                className={`${styles.center} ${channel === c.channel && styles.active}`}>
-                            {c.name}
-                        </button>
-                    ))}
-                </div>
-                <label className={styles.label}>닉네임</label>
-                <input value={name}
-                       className={styles.input}
-                       onChange={(e) => setName(e.target.value)}/>
-                <button onClick={getPrevScrum}
-                        className={styles.loadBtn}>
-                    이전 스크럼 불러오기
-                </button>
-                <div className={styles.prevContainer}>
-                    {prev.map((p, i) => (
-                        <div key={`prev ${i}`}
-                             className={styles.prev}
-                             dangerouslySetInnerHTML={{ __html: p }}>
+                <h1 className={styles.title}>스크럼 생성기</h1>
+                <div className={styles.card}>
+                    <label className={styles.label}>팀</label>
+                    <div className={styles.centerContainer}>
+                        {channels.map((c, idx) => (
+                            <button key={`channel${idx}`}
+                                    onClick={() => setChannel(c.channel)}
+                                    className={`${styles.center} ${channel === c.channel && styles.active}`}>
+                                {c.name}
+                            </button>
+                        ))}
+                    </div>
+                    <label className={styles.label}>닉네임</label>
+                    <input value={name}
+                           className={styles.input}
+                           onChange={(e) => setName(e.target.value)}
+                           onKeyDown={(e) => {
+                             if (e.key === 'Enter') {
+                               getPrevScrum();
+                             }
+                           }}
+                    />
+                    <button onClick={getPrevScrum}
+                            className={styles.loadBtn}>
+                        이전 스크럼 불러오기
+                    </button>
+                    <div className={styles.prevContainer}>
+                        {prev.map((p, i) => (
+                            <div key={`prev ${i}`}
+                                 className={styles.prev}
+                                 dangerouslySetInnerHTML={{ __html: p }}>
+                            </div>
+                        ))}
+                    </div>
+                    <label className={styles.label}>출근 날짜</label>
+                    <input className={styles.input}
+                           value={date}
+                           type='date'
+                           onChange={(e) => setDate(e.target.value)}
+                    />
+                    <div className={styles.time}>
+                        <div className={styles.timeLeft}>
+                            <label className={styles.label}>출근 시간</label>
+                            <input className={styles.input}
+                                   value={time}
+                                   type='time'
+                                   onChange={(e) => setTime(e.target.value)}
+                            />
+                        </div>
+                        <div className={styles.home}
+                             onClick={() => setIsHome(!isHome)}>
+                            <img src={`/icons/ic_checkbox_${isHome ? 'checked' : 'default'}.svg`}
+                                 alt=''/>
+                            재택
+                        </div>
+                    </div>
+                    <label className={styles.label}>업무 내용</label>
+                    <br/>
+                    {works.map((work, idx) => (
+                        <div key={`work ${idx}`}
+                             className={styles.work}>
+                            <span>{idx + 1}</span>
+                            <textarea className={styles.input}
+                                      placeholder='할일을 입력하세요'
+                                      rows={2}
+                                      value={works[idx]}
+                                      onChange={(e) => {
+                                        updateWork(e.target.value, idx);
+                                      }}
+                                      onKeyDown={(e) => {
+                                        if (idx === works.length - 1 && e.key === 'Tab') {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                          addRow();
+                                        }
+                                      }}
+                            />
+                            {works.length >= 2 && (
+                                <button className={styles.delete}
+                                        onClick={() => deleteRow(idx)}>
+                                    삭제
+                                </button>
+                            )}
                         </div>
                     ))}
+                    <button onClick={sendScrum}
+                            className={styles.write}>
+                        작성하기
+                    </button>
                 </div>
-                <label className={styles.label}>출근 날짜</label>
-                <input className={styles.input}
-                       value={date}
-                       type='date'
-                       onChange={(e) => setDate(e.target.value)}
-                />
-                <div className={styles.time}>
-                    <div className={styles.timeLeft}>
-                        <label className={styles.label}>출근 시간</label>
-                        <input className={styles.input}
-                               value={time}
-                               type='time'
-                               onChange={(e) => setTime(e.target.value)}
-                        />
-                    </div>
-                    <div className={styles.home}
-                         onClick={() => setIsHome(!isHome)}>
-                        <img src={`/icons/ic_checkbox_${isHome ? 'checked' : 'default'}.svg`}
-                             alt=''/>
-                        재택
-                    </div>
-                </div>
-                <label className={styles.label}>업무 내용</label>
-                <br/>
-                {works.map((work, idx) => (
-                    <div key={`work ${idx}`}
-                         className={styles.work}>
-                        <span>{idx + 1}</span>
-                        <textarea className={styles.input}
-                                  placeholder='할일을 입력하세요'
-                                  rows={2}
-                                  value={works[idx]}
-                                  onChange={(e) => {
-                                    updateWork(e.target.value, idx);
-                                  }}
-                                  onKeyDown={(e) => {
-                                    if (idx === works.length - 1 && e.key === 'Tab') {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                      addRow();
-                                    }
-                                  }}
-                        />
-                        {works.length >= 2 && (
-                            <button className={styles.delete}
-                                    onClick={() => deleteRow(idx)}>
-                                삭제
-                            </button>
-                        )}
-                    </div>
-                ))}
-                <button onClick={sendScrum}
-                        className={styles.write}>
-                    작성하기
-                </button>
             </div>
             <button onClick={() => router.push('/how-to-use')}
                     className={styles.howBtn} >
