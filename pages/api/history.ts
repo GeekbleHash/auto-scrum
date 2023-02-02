@@ -1,15 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import axios from 'axios';
+import Members from '../../libs/Members';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
   const { accessToken, channel, user } = req.query;
-  console.log(accessToken);
   if (typeof accessToken === 'string') {
-    console.log(channel);
     const fetched = (await axios.get<IHistory>('https://slack.com/api/conversations.history', {
       params: { channel },
       headers: {
@@ -27,6 +26,9 @@ export default async function handler(
           line = line.replace(/[*]/gi, '');
           line = `<b>${line}</b>`;
         }
+        Members.forEach((member) => {
+          line = line.replace(`<@${member.id}>`, `@${member.name}`);
+        });
         work += `${line}\n`;
       });
       result.push(work);

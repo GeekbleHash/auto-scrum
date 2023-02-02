@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth';
 import SlackProvider from 'next-auth/providers/slack';
+import MemberEmails from '../../../libs/Emails';
 
 export default NextAuth({
   providers: [
@@ -11,7 +12,6 @@ export default NextAuth({
   ],
   callbacks: {
     jwt: ({ token, account }) => {
-      // console.log(token);
       if (account?.access_token) {
         token.access_token = account.access_token;
       }
@@ -20,6 +20,14 @@ export default NextAuth({
     session: ({ token, user, session }) => {
       // @ts-ignore
       session.user.accessToken = token.access_token;
+      for (let i = 0; i < MemberEmails.length; i += 1) {
+        const member = MemberEmails[i];
+        // 닉네임이 아닌것들 캐스팅
+        if (session.user?.email === member.email) {
+          session.user.name = member.name;
+          break;
+        }
+      }
       return session;
     },
   },

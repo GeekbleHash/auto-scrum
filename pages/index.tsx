@@ -182,6 +182,9 @@ const Home: NextPage = () => {
                             )}
                         </div>
                     ))}
+                    <label className={styles.new}>
+                        ※ 새로운 항목을 만드시려면 tab 을 누르세요
+                    </label>
                     <button onClick={sendScrum}
                             className={styles.write}>
                         작성하기

@@ -24,8 +24,8 @@ app.prepare().then(() => {
     });
 
   const options = {
-    key: fs.readFileSync('/Users/isanhae/Projects/geekble/localhost-key.pem'),
-    cert: fs.readFileSync('/Users/isanhae/Projects/geekble/localhost.pem'),
+    key: fs.readFileSync('/Users/ihash/Projects/next/localhost-key.pem'),
+    cert: fs.readFileSync('/Users/ihash/Projects/next/localhost.pem'),
   };
   https
     .createServer(options, (req, res) => {
