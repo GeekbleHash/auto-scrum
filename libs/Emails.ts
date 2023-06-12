@@ -40,6 +40,12 @@ const MemberEmails: MemberEmail[] = [
   { name: '해수', email: 'seongmin@geekble.kr' },
   { name: '빽곰', email: 'backkom@geekble.kr' },
   { name: '소', email: 'so@geekble.kr' },
+  { name: '마크', email: 'mkim@geekble.kr' },
+  { name: '민주스', email: 'minjuice@geekble.kr' },
+  { name: '한나', email: 'hanna.park@geekble.kr' },
+  { name: '키니', email: 'kiny@geekble.kr' },
+  { name: '투넬', email: 'tunel@geekble.kr' },
+  { name: '지니', email: 'ljin@geekble.kr' },
 ];
 
 export default MemberEmails;

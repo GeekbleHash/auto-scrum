@@ -8,7 +8,17 @@ const rest = axios.create({
 class RestApi {
   static getPrevScrum = (accessToken: string, channel: string, user: string) => rest.get<string[]>('/history', { params: { accessToken, channel, user } });
 
-  static sendScrum = (accessToken: string, channel: string, scrum: string) => rest.post('/send', { accessToken, channel, scrum });
+  static sendScrum = (
+    accessToken: string,
+    channel: string,
+    name: string,
+    date: string,
+    time: string,
+    isHome: boolean,
+    content: string,
+  ) => rest.post('/send', {
+    accessToken, channel, date, time, isHome, content, name,
+  });
 }
 
 export default RestApi;

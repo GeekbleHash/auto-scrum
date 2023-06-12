@@ -3,14 +3,17 @@ import { signOut, useSession } from 'next-auth/react';
 import { useMemo, useState } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { NextSeo } from 'next-seo';
+import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
 import dayjs from 'dayjs';
 import styles from '../styles/index.module.scss';
 import RestApi from '../libs/RestApi';
 import 'dayjs/locale/ko';
-// eslint-disable-next-line import/order
-import { useRouter } from 'next/router';
+import BlockParser from '../libs/BlockParser';
 
 dayjs.locale('ko');
+
+const Editor = dynamic(() => import('../components/Editor'), { ssr: false });
 
 const Home: NextPage = () => {
   const { data } = useSession();
@@ -28,9 +31,9 @@ const Home: NextPage = () => {
   };
   const [date, setDate] = useState<string>(ogDate());
   const [time, setTime] = useState<string>('10:00');
-
+  const [content, setContent] = useState<string>('');
   const channels:ICenter[] = [
-    { name: '커머스사업부', channel: 'C029PU8KDLP' },
+    { name: '에듀/커머스사업부', channel: 'C029PU8KDLP' },
     { name: '디자인센터', channel: 'C02J3AEE6JV' },
     { name: '메이커센터', channel: 'C02DV4KR4HZ' },
     { name: '비즈니스센터', channel: 'C029Q4FALH5' },
@@ -48,24 +51,6 @@ const Home: NextPage = () => {
     }
   };
   const [works, setWorks] = useState<string[]>(['', '']);
-  const updateWork = (value: string, idx: number) => {
-    const tmp = works.map((work, i) => {
-      if (idx === i) {
-        return value;
-      }
-      return work;
-    });
-    setWorks(tmp);
-  };
-  const addRow = () => {
-    const tmp: string[] = [...works];
-    tmp.push('');
-    setWorks(tmp);
-  };
-  const deleteRow = (row: number) => {
-    const filtered = works.filter((v, idx) => idx !== row);
-    setWorks(filtered);
-  };
   const scrum = useMemo(() => {
     const format = dayjs(date).format('MMDD(ddd)');
     let result = `<${name} 스크럼 ${format}>\n
@@ -78,9 +63,20 @@ const Home: NextPage = () => {
     });
     return result;
   }, [name, date, time, works, isHome]);
+  // 스크럼 생성 요청
   const sendScrum = () => {
     if (data?.user && 'accessToken' in data.user && typeof data.user.accessToken === 'string') {
-      RestApi.sendScrum(data.user.accessToken, channel, scrum)
+      const blocks = BlockParser.convertBlocks(content);
+      console.log(blocks);
+      RestApi.sendScrum(
+        data.user.accessToken,
+        channel,
+        name,
+        date,
+        time,
+        isHome,
+        JSON.stringify(blocks),
+      )
         .then(() => {
           window.alert('스크럼이 작성되었습니다.');
         }).catch(() => {
@@ -154,37 +150,8 @@ const Home: NextPage = () => {
                         </div>
                     </div>
                     <label className={styles.label}>업무 내용</label>
-                    <br/>
-                    {works.map((work, idx) => (
-                        <div key={`work ${idx}`}
-                             className={styles.work}>
-                            <span>{idx + 1}</span>
-                            <textarea className={styles.input}
-                                      placeholder='할일을 입력하세요'
-                                      rows={2}
-                                      value={works[idx]}
-                                      onChange={(e) => {
-                                        updateWork(e.target.value, idx);
-                                      }}
-                                      onKeyDown={(e) => {
-                                        if (idx === works.length - 1 && e.key === 'Tab') {
-                                          e.preventDefault();
-                                          e.stopPropagation();
-                                          addRow();
-                                        }
-                                      }}
-                            />
-                            {works.length >= 2 && (
-                                <button className={styles.delete}
-                                        onClick={() => deleteRow(idx)}>
-                                    삭제
-                                </button>
-                            )}
-                        </div>
-                    ))}
-                    <label className={styles.new}>
-                        ※ 새로운 항목을 만드시려면 tab 을 누르세요
-                    </label>
+                    <Editor content={content}
+                            setContent={setContent} />
                     <button onClick={sendScrum}
                             className={styles.write}>
                         작성하기
