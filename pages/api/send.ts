@@ -2,8 +2,11 @@ import { NextApiRequest, NextApiResponse } from 'next';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { WebClient } from '@slack/web-api';
 import * as dayjs from 'dayjs';
+import 'dayjs/locale/ko';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { KnownBlock } from '@slack/types';
+
+dayjs.locale('ko');
 
 export default async function handler(
   req: NextApiRequest,

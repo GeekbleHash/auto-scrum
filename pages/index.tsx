@@ -6,6 +6,8 @@ import { NextSeo } from 'next-seo';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import dayjs from 'dayjs';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { KnownBlock } from '@slack/types';
 import styles from '../styles/index.module.scss';
 import RestApi from '../libs/RestApi';
 import 'dayjs/locale/ko';
@@ -50,40 +52,80 @@ const Home: NextPage = () => {
         });
     }
   };
-  const [works, setWorks] = useState<string[]>(['', '']);
-  const scrum = useMemo(() => {
-    const format = dayjs(date).format('MMDD(ddd)');
-    let result = `<${name} 스크럼 ${format}>\n
-업무 형태: ${isHome ? '재택' : '현장'}(출근 ${time})\n
-업무 내용:\n`;
-    works.forEach((work, idx) => {
-      if (work.length !== 0) {
-        result += `${idx + 1}. ${work}\n`;
-      }
-    });
-    return result;
-  }, [name, date, time, works, isHome]);
+  const blocks = useMemo<KnownBlock[]>(() => BlockParser.convertBlocks(content), [content]);
   // 스크럼 생성 요청
   const sendScrum = () => {
-    if (data?.user && 'accessToken' in data.user && typeof data.user.accessToken === 'string') {
-      const blocks = BlockParser.convertBlocks(content);
-      console.log(blocks);
-      RestApi.sendScrum(
-        data.user.accessToken,
-        channel,
-        name,
-        date,
-        time,
-        isHome,
-        JSON.stringify(blocks),
-      )
-        .then(() => {
-          window.alert('스크럼이 작성되었습니다.');
-        }).catch(() => {
-          window.alert('오류가 발생하였습니다.');
-        });
+    if (window.confirm('스크럼을 작성하시겠습니까?')) {
+      if (data?.user && 'accessToken' in data.user && typeof data.user.accessToken === 'string') {
+        RestApi.sendScrum(
+          data.user.accessToken,
+          channel,
+          name,
+          date,
+          time,
+          isHome,
+          JSON.stringify(blocks),
+        )
+          .then(() => {
+            window.alert('스크럼이 작성되었습니다.');
+          }).catch(() => {
+            window.alert('오류가 발생하였습니다.');
+          });
+      }
     }
   };
+  const previewHtml = useMemo<string>(() => {
+    // slack 블록 형식을 HTML로 변환
+    try {
+      const format = dayjs(date).format('MMDD(ddd)');
+      let result = `<b><${name} 스크럼 ${format}></b><br/>
+<b>업무 형태: ${isHome ? '재택' : '현장'}(출근 ${time})</b><br/>
+<b>업무 내용:</b><br/>`;
+      for (let i = 0; i < blocks.length; i += 1) {
+        const block = blocks[i];
+        // 일반 텍스트일 때 마크다운 처리
+        if (block.type === 'section') {
+          const trim = block.text?.text.trim();
+          if (trim) {
+            if (trim.startsWith('*') && trim.endsWith('*')) {
+              result += `<p><b>${trim.slice(1, (trim.length || 2) - 2)}</b></p>`;
+            } else if (trim.startsWith('_') && trim.endsWith('_')) {
+              result += `<p><i>${trim.slice(1, (trim.length || 2) - 2)}</i></p>`;
+            } else if (trim.startsWith('~') && trim.endsWith('~')) {
+              result += `<p><s>${trim.slice(1, (trim.length || 2) - 2)}</s></p>`;
+            } else {
+              result += `<p>${block.text?.text}</p>`;
+            }
+          }
+        }
+        // 특수 블록은 별도 처리
+        switch (block.type) {
+          case 'divider':
+            result += '<hr>';
+            break;
+          case 'header':
+            result += `<h1>${block.text.text}</h1>`;
+            break;
+          case 'image':
+            result += `<img src="${block.image_url}" alt='이미지'>`;
+            break;
+          default:
+            break;
+        }
+      }
+      return result;
+    } catch {
+      return '';
+    }
+  }, [blocks]);
+  const preview = useMemo<string>(() => {
+    const format = dayjs(date).format('MMDD(ddd)');
+    let result = `<b><${name} 스크럼 ${format}></b><br/>
+<b>업무 형태: ${isHome ? '재택' : '현장'}(출근 ${time})</b><br/>
+<b>업무 내용:</b><br/>`;
+    result += content;
+    return result;
+  }, [content, name, date, time, isHome]);
   const logout = () => {
     signOut();
   };
@@ -157,6 +199,10 @@ const Home: NextPage = () => {
                         작성하기
                     </button>
                 </div>
+            </div>
+            <div className={styles.preview}>
+                <h3>미리보기</h3>
+                <div dangerouslySetInnerHTML={{ __html: previewHtml }} />
             </div>
             <button onClick={() => router.push('/how-to-use')}
                     className={styles.howBtn} >
