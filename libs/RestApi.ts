@@ -16,8 +16,9 @@ class RestApi {
     time: string,
     isHome: boolean,
     content: string,
+    postAt?: number,
   ) => rest.post('/send', {
-    accessToken, channel, date, time, isHome, content, name,
+    accessToken, channel, date, time, isHome, content, name, postAt,
   });
 }
 

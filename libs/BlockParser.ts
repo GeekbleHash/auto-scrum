@@ -137,7 +137,6 @@ class BlockParser {
     // null 제외이기에 실질 오류 없음
     // @ts-ignore
     const enableBlocks: KnownBlock[] = blocks.filter((b) => b !== null);
-    console.log(enableBlocks);
     return enableBlocks;
   };
 }

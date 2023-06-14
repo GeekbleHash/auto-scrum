@@ -22,6 +22,9 @@ const Home: NextPage = () => {
   const router = useRouter();
   const [name, setName] = useState<string>(data?.user?.name || '');
   const [isHome, setIsHome] = useState<boolean>(false);
+  const [scheduleEnable, setScheduleEnable] = useState<boolean>(false);
+  const [postAt, setPostAt] = useState<string|undefined>(undefined);
+  const postAtTime = useMemo<number>(() => dayjs(postAt).toDate().getTime(), [postAt]);
   const ogDate = () => {
     let pivotDate = dayjs();
     pivotDate = pivotDate.add(1, 'day');
@@ -55,7 +58,7 @@ const Home: NextPage = () => {
   const blocks = useMemo<KnownBlock[]>(() => BlockParser.convertBlocks(content), [content]);
   // 스크럼 생성 요청
   const sendScrum = () => {
-    if (window.confirm('스크럼을 작성하시겠습니까?')) {
+    if (window.confirm(`스크럼을 ${scheduleEnable ? '예약' : '작성'}하시겠습니까?`)) {
       if (data?.user && 'accessToken' in data.user && typeof data.user.accessToken === 'string') {
         RestApi.sendScrum(
           data.user.accessToken,
@@ -65,9 +68,10 @@ const Home: NextPage = () => {
           time,
           isHome,
           JSON.stringify(blocks),
+          scheduleEnable ? postAtTime : undefined,
         )
           .then(() => {
-            window.alert('스크럼이 작성되었습니다.');
+            window.alert(`스크럼이 ${scheduleEnable ? '예약' : '작성'}되었습니다.`);
           }).catch(() => {
             window.alert('오류가 발생하였습니다.');
           });
@@ -191,6 +195,22 @@ const Home: NextPage = () => {
                             재택
                         </div>
                     </div>
+                    <div className={styles.schedule}
+                         onClick={() => setScheduleEnable(!scheduleEnable)}>
+                        <img src={`/icons/ic_checkbox_${scheduleEnable ? 'checked' : 'default'}.svg`}
+                             alt=''/>
+                        <label className={styles.label}>
+                            예약 발송
+                        </label>
+                    </div>
+                    {scheduleEnable && (
+                        <input className={styles.input}
+                               value={postAt || ''}
+                               onChange={(e) => {
+                                 setPostAt(e.target.value);
+                               }}
+                               type='datetime-local' />
+                    )}
                     <label className={styles.label}>업무 내용</label>
                     <Editor content={content}
                             setContent={setContent} />

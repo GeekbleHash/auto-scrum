@@ -13,7 +13,7 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   const {
-    accessToken, channel, date, isHome, content, name, time,
+    accessToken, channel, date, isHome, content, name, time, postAt,
   } = req.body;
   const web = new WebClient(accessToken);
   // @ts-ignore
@@ -26,13 +26,21 @@ export default async function handler(
     },
   };
   const contentBlocks: KnownBlock[] = JSON.parse(content);
-  await web.chat.postMessage({
-    blocks: [
-      firstBlock,
-      ...contentBlocks,
-    ],
-    mrkdwn: true,
-    channel,
-  });
+  if (postAt) {
+    await web.chat.scheduleMessage({
+      blocks: [firstBlock, ...contentBlocks],
+      channel,
+      post_at: postAt,
+    });
+  } else {
+    await web.chat.postMessage({
+      blocks: [
+        firstBlock,
+        ...contentBlocks,
+      ],
+      mrkdwn: true,
+      channel,
+    });
+  }
   res.json(true);
 }

@@ -242,3 +242,17 @@
     white-space: pre-wrap;
   }
 }
+
+.schedule {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  cursor: pointer;
+  img {
+    margin-right: 8px;
+  }
+  label {
+    margin: 0;
+    cursor: pointer;
+  }
+}
